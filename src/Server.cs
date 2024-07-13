@@ -24,8 +24,10 @@ while (true)
 
     Console.WriteLine($"Received {receivedData.Length} bytes from {sourceEndPoint}: {receivedString}");
 
-    // Create an empty response
-    byte[] response = Encoding.ASCII.GetBytes("");
+    var message = new DnsMessage();
+    message.PacketIdentifier = 1234;
+    message.QueryResponseIndicator = true;
+    byte[] response = message.GetBytes();
 
     // Send response
     udpClient.Send(response, response.Length, sourceEndPoint);
