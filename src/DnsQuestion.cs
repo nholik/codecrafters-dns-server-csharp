@@ -4,7 +4,7 @@ using System.Buffers.Binary;
 public class DnsQuestion
 {
     public required string Name { get; set; }
-    public DnsQuestionType Type { get; set; }
+    public DnsRecordType Type { get; set; }
     public DnsClassType Class { get; set; }
 
     public DnsQuestion(byte[] input)
@@ -24,7 +24,7 @@ public class DnsQuestion
         Name = string.Join(".", nameParts);
 
         BinaryPrimitives.TryReadUInt32BigEndian(new ReadOnlySpan<byte>(input, offset, 2), out var questionType);
-        Type = (DnsQuestionType)questionType;
+        Type = (DnsRecordType)questionType;
         BinaryPrimitives.TryReadUInt32BigEndian(new ReadOnlySpan<byte>(input, offset + 2, 2), out var classType);
         Class = (DnsClassType)classType;
     }
@@ -36,24 +36,10 @@ public class DnsQuestion
 
     public byte[] GetBytes()
     {
-        var questionBytes = new List<byte>();
-        var nameParts = Name.Split(".");
+        var questionBytes = Name.ToAddressByteEncoding();
+        questionBytes.AddRange(DnsUtils.EncodeRecordType(Type));
+        questionBytes.AddRange(DnsUtils.EncodeClass(Class));
 
-        foreach (var part in nameParts)
-        {
-            questionBytes.Add((byte)part.Length);
-            var encodedName = Encoding.ASCII.GetBytes(part);
-            questionBytes.AddRange(encodedName);
-        }
-        questionBytes.Add(0);
-
-        var typeBytes = new byte[2];
-        BinaryPrimitives.TryWriteUInt16BigEndian(new Span<byte>(typeBytes), (ushort)Type);
-        questionBytes.AddRange(typeBytes);
-
-        var classBytes = new byte[2];
-        BinaryPrimitives.TryWriteUInt16BigEndian(new Span<byte>(classBytes), (ushort)Class);
-        questionBytes.AddRange(classBytes);
         return questionBytes.ToArray();
     }
 }

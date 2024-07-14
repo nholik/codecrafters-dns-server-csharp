@@ -31,8 +31,17 @@ while (true)
     {
         Name = "codecrafters.io",
         Class = DnsClassType.IN,
-        Type = DnsQuestionType.A
+        Type = DnsRecordType.A
     });
+    message.AddAnswer(new DnsAnswer()
+    {
+        Name = "codecrafters.io",
+        Class = DnsClassType.IN,
+        Type = DnsRecordType.A,
+        TTL = 60,
+        Data = "8.8.8.8"
+    });
+
     byte[] response = message.GetBytes();
 
     udpClient.Send(response, response.Length, sourceEndPoint);

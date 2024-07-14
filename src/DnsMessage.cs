@@ -45,20 +45,32 @@ public class DnsMessage
 
     public ushort QuestionCount
     {
-        get => (ushort)Questions.Count;
+        get => (ushort)_questions.Count;
         set
         {
             _header[4] = (byte)(value >> 8);
             _header[5] = (byte)(value & 0x00FF);
         }
     }
-    public ushort AnswerRecordCount { get; set; }
+    public ushort AnswerRecordCount
+    {
+        get => (ushort)_answers.Count;
+        set
+        {
+            _header[6] = (byte)(value >> 8);
+            _header[7] = (byte)(value & 0x00FF);
+        }
+    }
     public ushort AuthorityRecordCount { get; set; }
 
     public ushort AdditionalRecordCount { get; set; }
 
     private readonly List<DnsQuestion> _questions;
     public ReadOnlyCollection<DnsQuestion> Questions => _questions.AsReadOnly();
+
+    private readonly List<DnsAnswer> _answers;
+
+    public ReadOnlyCollection<DnsAnswer> Answers => _answers.AsReadOnly();
 
 
     public DnsMessage() : this(new byte[12])
@@ -69,6 +81,7 @@ public class DnsMessage
     {
         _header = headerData;
         _questions = new List<DnsQuestion>();
+        _answers = new List<DnsAnswer>();
     }
 
     public void AddQuestion(DnsQuestion question)
@@ -77,9 +90,20 @@ public class DnsMessage
         QuestionCount = (ushort)_questions.Count;
     }
 
+    public void AddAnswer(DnsAnswer answer)
+    {
+        _answers.Add(answer);
+        AnswerRecordCount = (ushort)_answers.Count;
+    }
+
     public byte[] GetBytes()
     {
-        var outputeBytes = Questions.Aggregate(_header, (acc, curr) =>
+        var headerAndQuestionBytes = Questions.Aggregate(_header, (acc, curr) =>
+        {
+            return acc.Concat(curr.GetBytes()).ToArray();
+        });
+
+        var outputeBytes = Answers.Aggregate(headerAndQuestionBytes, (acc, curr) =>
         {
             return acc.Concat(curr.GetBytes()).ToArray();
         });

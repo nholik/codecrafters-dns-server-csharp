@@ -1,4 +1,4 @@
-public enum DnsQuestionType : ushort
+public enum DnsRecordType : ushort
 {
     A = 1,
     NS = 2,
