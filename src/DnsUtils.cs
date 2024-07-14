@@ -23,11 +23,13 @@ public static class DnsUtils
     {
         var encoded = new List<byte>();
         var ipParts = ipData.Split(".");
+        uint data = 0;
         foreach (var part in ipParts)
         {
-            uint.TryParse(part, out var data);
-            encoded.AddRange(EncodeFourByteResult(data));
+            uint.TryParse(part, out var ipSection);
+            data = data * 10 + ipSection;
         }
+        encoded.AddRange(EncodeFourByteResult(data));
         return encoded;
     }
 
