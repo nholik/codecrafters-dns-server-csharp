@@ -1,5 +1,7 @@
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data.SqlTypes;
 
 public class DnsMessage
 {
@@ -41,11 +43,22 @@ public class DnsMessage
     public byte ReservedZ { get; set; }
     public byte ResponseCode { get; set; }
 
-    public ushort QuestionCount { get; set; }
+    public ushort QuestionCount
+    {
+        get => (ushort)Questions.Count;
+        set
+        {
+            _header[4] = (byte)(value >> 8);
+            _header[5] = (byte)(value & 0x00FF);
+        }
+    }
     public ushort AnswerRecordCount { get; set; }
     public ushort AuthorityRecordCount { get; set; }
 
     public ushort AdditionalRecordCount { get; set; }
+
+    private readonly List<DnsQuestion> _questions;
+    public ReadOnlyCollection<DnsQuestion> Questions => _questions.AsReadOnly();
 
 
     public DnsMessage() : this(new byte[12])
@@ -55,8 +68,22 @@ public class DnsMessage
     public DnsMessage(byte[] headerData)
     {
         _header = headerData;
+        _questions = new List<DnsQuestion>();
     }
 
-    public byte[] GetBytes() => _header;
+    public void AddQuestion(DnsQuestion question)
+    {
+        _questions.Add(question);
+        QuestionCount = (ushort)_questions.Count;
+    }
 
+    public byte[] GetBytes()
+    {
+        var outputeBytes = Questions.Aggregate(_header, (acc, curr) =>
+        {
+            return acc.Concat(curr.GetBytes()).ToArray();
+        });
+
+        return outputeBytes;
+    }
 }

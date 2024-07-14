@@ -27,9 +27,14 @@ while (true)
     var message = new DnsMessage();
     message.PacketIdentifier = 1234;
     message.QueryResponseIndicator = true;
+    message.AddQuestion(new DnsQuestion()
+    {
+        Name = "codecrafters.io",
+        Class = DnsClassType.IN,
+        Type = DnsQuestionType.A
+    });
     byte[] response = message.GetBytes();
 
-    // Send response
     udpClient.Send(response, response.Length, sourceEndPoint);
 }
 
