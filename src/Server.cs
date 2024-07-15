@@ -24,9 +24,13 @@ while (true)
 
     Console.WriteLine($"Received {receivedData.Length} bytes from {sourceEndPoint}: {receivedString}");
 
-    var message = new DnsMessage();
-    message.PacketIdentifier = 1234;
+    var message = new DnsMessage(receivedData[0..3]);
     message.QueryResponseIndicator = true;
+    message.AuthoritativeAnswer = false;
+    message.Truncation = false;
+    message.RecursionAvailable = false;
+    message.ReservedZ = 0;
+
     message.AddQuestion(new DnsQuestion()
     {
         Name = "codecrafters.io",

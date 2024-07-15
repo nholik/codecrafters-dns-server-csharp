@@ -35,10 +35,63 @@ public class DnsMessage
             }
         }
     }
-    public byte OperationCode { get; set; }
-    public bool AuthoritativeAnswer { get; set; }
-    public bool Truncation { get; set; }
-    public bool RecursionDesired { get; set; }
+    public byte OperationCode
+    {
+        get => (byte)(_header[2] & 0x70);
+        set
+        {
+            var result = (byte)((value << 4) | (_header[2] & 0x8F));
+            _header[2] &= result;
+        }
+    }
+    public bool AuthoritativeAnswer
+    {
+        get => (_header[2] & 0x04) != 0x00;
+        set
+        {
+            if (value)
+            {
+                _header[2] |= 4;
+            }
+            else
+            {
+                _header[2] &= 0xFB;
+            }
+
+        }
+    }
+    public bool Truncation
+    {
+        get => (byte)(_header[2] & 0x02) != 0x00;
+        set
+        {
+            if (value)
+            {
+                _header[2] |= 2;
+            }
+            else
+            {
+                _header[2] &= 0xFD;
+            }
+
+        }
+    }
+    public bool RecursionDesired
+    {
+        get => (byte)(_header[2] & 0x01) != 0x00;
+        set
+        {
+            if (value)
+            {
+                _header[2] |= 1;
+            }
+            else
+            {
+                _header[2] &= 0xFE;
+            }
+        }
+    }
+    //third byte
     public bool RecursionAvailable { get; set; }
     public byte ReservedZ { get; set; }
     public byte ResponseCode { get; set; }
@@ -79,7 +132,11 @@ public class DnsMessage
 
     public DnsMessage(byte[] headerData)
     {
-        _header = headerData;
+        _header = new byte[12];
+        for (int i = 0; i < headerData.Length; i++)
+        {
+            _header[i] = headerData[i];
+        }
         _questions = new List<DnsQuestion>();
         _answers = new List<DnsAnswer>();
     }
