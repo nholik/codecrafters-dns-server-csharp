@@ -37,7 +37,7 @@ public class DnsMessage
     }
     public byte OperationCode
     {
-        get => (byte)(_header[2] & 0x70);
+        get => (byte)((_header[2] & 0x78) >> 3);
         set
         {
             var result = (byte)((value << 4) | (_header[2] & 0x8F));
