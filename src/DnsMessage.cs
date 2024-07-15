@@ -94,7 +94,14 @@ public class DnsMessage
     //third byte
     public bool RecursionAvailable { get; set; }
     public byte ReservedZ { get; set; }
-    public byte ResponseCode { get; set; }
+    public byte ResponseCode
+    {
+        get => (byte)(_header[3] & 0x0F);
+        set
+        {
+            _header[3] |= (byte)(value & 0x0F);
+        }
+    }
 
     public ushort QuestionCount
     {
@@ -136,6 +143,14 @@ public class DnsMessage
         for (int i = 0; i < headerData.Length; i++)
         {
             _header[i] = headerData[i];
+        }
+        if (OperationCode == 0)
+        {
+            ResponseCode = 0;
+        }
+        else
+        {
+            ResponseCode = 4;
         }
         _questions = new List<DnsQuestion>();
         _answers = new List<DnsAnswer>();
