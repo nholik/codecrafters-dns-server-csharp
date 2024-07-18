@@ -3,7 +3,7 @@ using System.Buffers.Binary;
 
 public class DnsQuestion
 {
-    public required string Name { get; set; }
+    public string Name { get; init; }
     public DnsRecordType Type { get; set; }
     public DnsClassType Class { get; set; }
 
@@ -14,24 +14,24 @@ public class DnsQuestion
         var offset = 1;
         do
         {
-            var nameBytes = input[offset..(offset + length + 1)];
+            var nameBytes = input[offset..(offset + length)];
             offset += length + 1;
-            length = input[offset + length + 1];
+            length = input[offset - 1];
             nameParts.Add(Encoding.ASCII.GetString(nameBytes));
 
         } while (length != 0);
 
-        Name = string.Join(".", nameParts);
+        Name = string.Join(".", nameParts) ?? string.Empty;
 
-        BinaryPrimitives.TryReadUInt32BigEndian(new ReadOnlySpan<byte>(input, offset, 2), out var questionType);
+        BinaryPrimitives.TryReadUInt16BigEndian(input[offset..(offset + 2)], out var questionType);
         Type = (DnsRecordType)questionType;
-        BinaryPrimitives.TryReadUInt32BigEndian(new ReadOnlySpan<byte>(input, offset + 2, 2), out var classType);
+        BinaryPrimitives.TryReadUInt16BigEndian(input[(offset + 2)..(offset + 4)], out var classType);
         Class = (DnsClassType)classType;
     }
 
     public DnsQuestion()
     {
-
+        Name = string.Empty;
     }
 
     public byte[] GetBytes()

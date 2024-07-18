@@ -31,20 +31,20 @@ while (true)
     message.RecursionAvailable = false;
     message.ReservedZ = 0;
 
-    message.AddQuestion(new DnsQuestion()
-    {
-        Name = "codecrafters.io",
-        Class = DnsClassType.IN,
-        Type = DnsRecordType.A
-    });
-    message.AddAnswer(new DnsAnswer()
-    {
-        Name = "codecrafters.io",
-        Class = DnsClassType.IN,
-        Type = DnsRecordType.A,
-        TTL = 60,
-        Data = "8.8.8.8"
-    });
+    message.AddQuestion(new DnsQuestion(receivedData[12..]));
+    // {
+    //     Name = "codecrafters.io",
+    //     Class = DnsClassType.IN,
+    //     Type = DnsRecordType.A
+    // });
+    // message.AddAnswer(new DnsAnswer()
+    // {
+    //     Name = "codecrafters.io",
+    //     Class = DnsClassType.IN,
+    //     Type = DnsRecordType.A,
+    //     TTL = 60,
+    //     Data = "8.8.8.8"
+    // });
 
     byte[] response = message.GetBytes();
 

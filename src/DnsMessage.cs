@@ -160,22 +160,32 @@ public class DnsMessage
     {
         _questions.Add(question);
         QuestionCount = (ushort)_questions.Count;
-    }
-
-    public void AddAnswer(DnsAnswer answer)
-    {
+        var answer = new DnsAnswer()
+        {
+            Name = question.Name,
+            Class = question.Class,
+            Type = question.Type,
+            TTL = 60,
+            Data = "8.8.8.8",
+        };
         _answers.Add(answer);
         AnswerRecordCount = (ushort)_answers.Count;
     }
 
+    // public void AddAnswer(DnsAnswer answer)
+    // {
+    //     _answers.Add(answer);
+    //     AnswerRecordCount = (ushort)_answers.Count;
+    // }
+
     public byte[] GetBytes()
     {
-        var headerAndQuestionBytes = Questions.Aggregate(_header, (acc, curr) =>
-        {
-            return acc.Concat(curr.GetBytes()).ToArray();
-        });
+        // var headerAndQuestionBytes = Questions.Aggregate(_header, (acc, curr) =>
+        // {
+        //     return acc.Concat(curr.GetBytes()).ToArray();
+        // });
 
-        var outputeBytes = Answers.Aggregate(headerAndQuestionBytes, (acc, curr) =>
+        var outputeBytes = Answers.Aggregate(_header, (acc, curr) =>
         {
             return acc.Concat(curr.GetBytes()).ToArray();
         });
