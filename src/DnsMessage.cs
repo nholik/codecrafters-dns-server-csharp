@@ -180,12 +180,12 @@ public class DnsMessage
 
     public byte[] GetBytes()
     {
-        // var headerAndQuestionBytes = Questions.Aggregate(_header, (acc, curr) =>
-        // {
-        //     return acc.Concat(curr.GetBytes()).ToArray();
-        // });
+        var headerAndQuestionBytes = Questions.Aggregate(_header, (acc, curr) =>
+        {
+            return acc.Concat(curr.GetBytes()).ToArray();
+        });
 
-        var outputeBytes = Answers.Aggregate(_header, (acc, curr) =>
+        var outputeBytes = Answers.Aggregate(headerAndQuestionBytes, (acc, curr) =>
         {
             return acc.Concat(curr.GetBytes()).ToArray();
         });
