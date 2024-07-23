@@ -67,12 +67,12 @@ public class DnsQuestion
         var root = new DnsQuestion(input, 12);
         result.Add(root);
 
-        var nextOffset = root._endingOffset + 1;
+        var nextOffset = root._endingOffset;
         while (result.Count < questionCount && nextOffset < input.Length)
         {
             var q = new DnsQuestion(input, nextOffset);
             result.Add(q);
-            nextOffset += q._endingOffset + 1;
+            nextOffset += q._endingOffset;
         }
 
         return result;
