@@ -41,6 +41,7 @@ public class DnsQuestion
         } while (length != 0);
 
         Name = string.Join(".", _nameParts) ?? string.Empty;
+        offset++;
 
         BinaryPrimitives.TryReadUInt16BigEndian(input[offset..(offset + 2)], out var questionType);
         Type = (DnsRecordType)questionType;
