@@ -24,6 +24,13 @@ while (true)
 
     Console.WriteLine($"Received {receivedData.Length} bytes from {sourceEndPoint}: {receivedString}");
 
+    StringBuilder sb = new StringBuilder();
+    foreach (byte b in receivedData)
+    {
+        sb.AppendFormat("\\x{0:X2}", b);
+    }
+    Console.WriteLine(sb.ToString());
+
     var message = new DnsMessage(receivedData[0..3])
     {
         QueryResponseIndicator = true,
