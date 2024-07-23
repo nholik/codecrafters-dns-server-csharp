@@ -29,6 +29,7 @@ while (true)
     {
         sb.AppendFormat("\\x{0:X2}", b);
     }
+    Console.WriteLine("Recieved packet...");
     Console.WriteLine(sb.ToString());
 
     var message = new DnsMessage(receivedData[0..3])
