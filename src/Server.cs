@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Text;
 
 var cliArgs = Environment.GetCommandLineArgs();
+Console.WriteLine(cliArgs);
 
 var useForwarder = cliArgs.Length > 1 && cliArgs[0] == "--resolver";
 IPAddress? forwarderAddress = useForwarder ? IPAddress.Parse(cliArgs[1]) : null;
