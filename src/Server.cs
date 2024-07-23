@@ -5,8 +5,8 @@ using System.Text;
 
 var cliArgs = Environment.GetCommandLineArgs();
 
-var useResolver = cliArgs.Length > 1 && cliArgs[0] == "--resolver";
-IPAddress? forwarderAddress = useResolver ? IPAddress.Parse(cliArgs[1]) : null;
+var useForwarder = cliArgs.Length > 1 && cliArgs[0] == "--resolver";
+IPAddress? forwarderAddress = useForwarder ? IPAddress.Parse(cliArgs[1]) : null;
 
 IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
 int port = 2053;
@@ -22,14 +22,11 @@ while (true)
     string receivedString = Encoding.ASCII.GetString(receivedData);
 
     Console.WriteLine($"Received {receivedData.Length} bytes from {sourceEndPoint}: {receivedString}");
+    if (useForwarder)
+    {
+        Console.WriteLine("using forwarder");
+    }
 
-    // StringBuilder sb = new StringBuilder();
-    // foreach (byte b in receivedData)
-    // {
-    //     sb.AppendFormat("\\x{0:X2}", b);
-    // }
-    // Console.WriteLine("Recieved packet...");
-    // Console.WriteLine(sb.ToString());
 
     var message = new DnsMessage(receivedData[0..3])
     {
