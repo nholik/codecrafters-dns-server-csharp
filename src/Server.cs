@@ -3,16 +3,15 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
-// You can use print statements as follows for debugging, they'll be visible when running tests.
-Console.WriteLine("Logs from your program will appear here!");
+var cliArgs = Environment.GetCommandLineArgs();
 
-// Uncomment this block to pass the first stage
-// Resolve UDP address
+var useResolver = cliArgs.Length > 1 && cliArgs[0] == "--resolver";
+IPAddress? forwarderAddress = useResolver ? IPAddress.Parse(cliArgs[1]) : null;
+
 IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
 int port = 2053;
 IPEndPoint udpEndPoint = new IPEndPoint(ipAddress, port);
 
-// Create UDP socket
 UdpClient udpClient = new UdpClient(udpEndPoint);
 
 while (true)
@@ -24,13 +23,13 @@ while (true)
 
     Console.WriteLine($"Received {receivedData.Length} bytes from {sourceEndPoint}: {receivedString}");
 
-    StringBuilder sb = new StringBuilder();
-    foreach (byte b in receivedData)
-    {
-        sb.AppendFormat("\\x{0:X2}", b);
-    }
-    Console.WriteLine("Recieved packet...");
-    Console.WriteLine(sb.ToString());
+    // StringBuilder sb = new StringBuilder();
+    // foreach (byte b in receivedData)
+    // {
+    //     sb.AppendFormat("\\x{0:X2}", b);
+    // }
+    // Console.WriteLine("Recieved packet...");
+    // Console.WriteLine(sb.ToString());
 
     var message = new DnsMessage(receivedData[0..3])
     {
