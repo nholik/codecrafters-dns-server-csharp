@@ -24,27 +24,19 @@ while (true)
 
     Console.WriteLine($"Received {receivedData.Length} bytes from {sourceEndPoint}: {receivedString}");
 
-    var message = new DnsMessage(receivedData[0..3]);
-    message.QueryResponseIndicator = true;
-    message.AuthoritativeAnswer = false;
-    message.Truncation = false;
-    message.RecursionAvailable = false;
-    message.ReservedZ = 0;
+    var message = new DnsMessage(receivedData[0..3])
+    {
+        QueryResponseIndicator = true,
+        AuthoritativeAnswer = false,
+        Truncation = false,
+        RecursionAvailable = false,
+        ReservedZ = 0
+    };
 
-    message.AddQuestion(new DnsQuestion(receivedData[12..]));
-    // {
-    //     Name = "codecrafters.io",
-    //     Class = DnsClassType.IN,
-    //     Type = DnsRecordType.A
-    // });
-    // message.AddAnswer(new DnsAnswer()
-    // {
-    //     Name = "codecrafters.io",
-    //     Class = DnsClassType.IN,
-    //     Type = DnsRecordType.A,
-    //     TTL = 60,
-    //     Data = "8.8.8.8"
-    // });
+    foreach (var q in DnsQuestion.Create(receivedData))
+    {
+        message.AddQuestion(q);
+    }
 
     byte[] response = message.GetBytes();
 

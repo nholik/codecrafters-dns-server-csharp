@@ -1,7 +1,6 @@
+using System.Buffers.Binary;
 using System.Collections;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Data.SqlTypes;
 
 public class DnsMessage
 {
@@ -132,7 +131,6 @@ public class DnsMessage
 
     public ReadOnlyCollection<DnsAnswer> Answers => _answers.AsReadOnly();
 
-
     public DnsMessage() : this(new byte[12])
     {
     }
@@ -154,6 +152,7 @@ public class DnsMessage
         }
         _questions = new List<DnsQuestion>();
         _answers = new List<DnsAnswer>();
+
     }
 
     public void AddQuestion(DnsQuestion question)
@@ -171,12 +170,6 @@ public class DnsMessage
         _answers.Add(answer);
         AnswerRecordCount = (ushort)_answers.Count;
     }
-
-    // public void AddAnswer(DnsAnswer answer)
-    // {
-    //     _answers.Add(answer);
-    //     AnswerRecordCount = (ushort)_answers.Count;
-    // }
 
     public byte[] GetBytes()
     {
