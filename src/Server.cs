@@ -46,7 +46,7 @@ while (true)
     if (useForwarder)
     {
         Console.WriteLine("using forwarder");
-        var answers = new List<byte[]>();
+
         foreach (var sourceQ in DnsQuestion.Create(receivedData))
         {
             var forwardMessage = new DnsMessage(receivedData[0..3]);
