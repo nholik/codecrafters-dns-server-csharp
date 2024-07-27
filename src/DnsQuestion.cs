@@ -63,6 +63,7 @@ public class DnsQuestion
     {
 
         var questionCount = BinaryPrimitives.ReadInt16BigEndian(input[4..6]);
+        Console.WriteLine($"There are {questionCount} questions...");
         var result = new List<DnsQuestion>();
         var root = new DnsQuestion(input, 12);
         result.Add(root);
