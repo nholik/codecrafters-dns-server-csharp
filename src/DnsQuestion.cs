@@ -9,11 +9,11 @@ public class DnsQuestion
     public DnsRecordType Type { get; set; }
     public DnsClassType Class { get; set; }
 
-    //private int _startOffset;
     private int _endingOffset;
 
+    public int EndingOffset => _endingOffset;
 
-    private DnsQuestion(byte[] input, int initialOffset)
+    public DnsQuestion(byte[] input, int initialOffset)
     {
         var offset = initialOffset;
         var length = input[offset];

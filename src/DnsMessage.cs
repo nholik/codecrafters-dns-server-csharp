@@ -159,14 +159,9 @@ public class DnsMessage
     {
         _questions.Add(question);
         QuestionCount = (ushort)_questions.Count;
-        var answer = new DnsAnswer()
-        {
-            Name = question.Name,
-            Class = question.Class,
-            Type = question.Type,
-            TTL = 60,
-            Data = "8.8.8.8",
-        };
+    }
+    public void AddAnswer(DnsAnswer answer)
+    {
         _answers.Add(answer);
         AnswerRecordCount = (ushort)_answers.Count;
     }
